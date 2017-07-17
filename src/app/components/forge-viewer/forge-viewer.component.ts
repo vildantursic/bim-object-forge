@@ -1,6 +1,5 @@
-import {Component, ViewChild, OnInit, OnDestroy, ElementRef, Input, AfterViewInit} from '@angular/core';
-import {Http} from "@angular/http";
-import {Observable} from "rxjs/Observable";
+import { Component, ViewChild, OnInit, OnDestroy, ElementRef, Input, AfterViewInit } from '@angular/core';
+import { Http } from '@angular/http';
 
 // We need to tell TypeScript that Autodesk exists as a variables/object somewhere globally
 declare const Autodesk: any;
@@ -47,7 +46,7 @@ export class ForgeViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       getAccessToken: (onSuccess) => { this.getAccessToken(onSuccess) },
     };
 
-    this.viewer = new Autodesk.Viewing.Viewer3D(this.viewerContainer.nativeElement, {}); // Headless viewer
+    this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.viewerContainer.nativeElement); // Headless viewer
 
     // Check if the viewer has already been initialised - this isn't the nicest, but we've set the env in our
     // options above so we at least know that it was us who did this!
