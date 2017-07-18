@@ -15,8 +15,8 @@ export class ForgeViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('viewerContainer') viewerContainer: any;
   private viewer: any;
 
-  myUrn = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Y3JlYXRpb24vdGVzdC5ydnQ';
-  access_token = 'eyJhbGciOiJIUzI1NiIsImtpZCI6Imp3dF9zeW1tZXRyaWNfa2V5In0.eyJjbGllbnRfaWQiOiJsOXZHbXU0VTF3QkxMcEt0a0pSeHdzOG8yZmZkNXhlYiIsImV4cCI6MTUwMDM4NjI5Mywic2NvcGUiOlsiZGF0YTpyZWFkIiwiZGF0YTp3cml0ZSIsImJ1Y2tldDpjcmVhdGUiXSwiYXVkIjoiaHR0cHM6Ly9hdXRvZGVzay5jb20vYXVkL2p3dGV4cDYwIiwianRpIjoia25Wa2xvemhxUnZQamxueFRZWTRBa1d5dEVFOW5OZnRUSGJyd2JFYmFCV3JRVGdIODZnbUJzcGNVZjhVdXU0aCJ9.1p0y2EYpSnoOfHCOV0kTnlZ-XzfeI0YEoR4elCsHkTo';
+  myUrn = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bW9kZWwyMDE3LTA3LTE4LTE0LTA2LTI2LWQ0MWQ4Y2Q5OGYwMGIyMDRlOTgwMDk5OGVjZjg0MjdlL1NlYXQuZHdm';
+  access_token = 'eyJhbGciOiJIUzI1NiIsImtpZCI6Imp3dF9zeW1tZXRyaWNfa2V5In0.eyJjbGllbnRfaWQiOiJsOXZHbXU0VTF3QkxMcEt0a0pSeHdzOG8yZmZkNXhlYiIsImV4cCI6MTUwMDM5MDAwOCwic2NvcGUiOlsiZGF0YTpyZWFkIiwiZGF0YTp3cml0ZSIsImJ1Y2tldDpjcmVhdGUiXSwiYXVkIjoiaHR0cHM6Ly9hdXRvZGVzay5jb20vYXVkL2p3dGV4cDYwIiwianRpIjoiWW02b21VS21XMkprVXc3NlRTN1U0UHdEa0dFQkZodzRVa0I3V1RCNVR5dVpQczhrTkQ3dmdOeURwemxUTmZ2byJ9.ubIVj_nGXsZIBh0ctvrykof9ipYSIYIhgqq7RvvN4IY';
   expires_in = 3599;
 
   constructor(private elementRef: ElementRef, private http: Http) { }
@@ -63,6 +63,11 @@ export class ForgeViewerComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loadDocument();
       });
     }
+  }
+
+  objLoad(event): void {
+    this.myUrn = event;
+    this.loadDocument();
   }
 
   private loadDocument() {

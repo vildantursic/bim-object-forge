@@ -17,12 +17,11 @@ export class FileUploadComponent {
   @Input() access_token = '';
   // @ViewChild('fileInput') inputEl: ElementRef;
 
-  @Output('onObjectLoad') onObjectLoad: EventEmitter<any> = new EventEmitter();
+  @Output('onObjectLoad') onObjectLoad: EventEmitter<string> = new EventEmitter();
 
   constructor(private http: Http, private service: MainService) {}
 
   fileChange(event) {
-    debugger;
     const fileList: FileList = event.target.files;
     if (fileList.length > 0) {
       const reader = new FileReader();
@@ -43,10 +42,10 @@ export class FileUploadComponent {
           )
           .map((response: Response) => response.json())
           .subscribe((data: any) => {
-
             this.service.translateModel(this.access_token, btoa(data.objectId)).subscribe((dt: any) => {
-              this.service.trackTranslationOfModel(this.access_token, btoa(data.objectId)).subscribe((objectId: any) => {
-                this.onObjectLoad.emit(objectId);
+              this.service.trackTranslationOfModel(this.access_token, btoa(data.objectId)).map(res => res.json())
+                .subscribe((obj: any) => {
+                  this.onObjectLoad.emit(obj.urn);
               })
             })
           })

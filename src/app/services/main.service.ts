@@ -8,12 +8,6 @@ export class MainService {
   constructor(private http: Http) { }
 
   translateModel(access_token: string, urn: string): any {
-    const options: RequestOptionsArgs = {
-      headers: new Headers({
-        'Authentication': 'Bearer ' + access_token,
-        'Content-Type': 'application/json'
-      })
-    }
 
     const data = {
       'input': {
@@ -29,15 +23,28 @@ export class MainService {
       }
     }
 
+    const headers = new Headers();
+    /** No need to include Content-Type in Angular 4 */
+    headers.append('Content-Type', 'application/json');
+    headers.append('Authorization', 'Bearer ' + access_token);
+
+    const options: RequestOptionsArgs = {
+      headers: headers,
+    }
+
     return this.http
       .post('https://developer.api.autodesk.com/modelderivative/v2/designdata/job', data, options)
   }
 
   trackTranslationOfModel(access_token: string, urn: string): any {
+
+    const headers = new Headers();
+    /** No need to include Content-Type in Angular 4 */
+    headers.append('Content-Type', 'application/json');
+    headers.append('Authorization', 'Bearer ' + access_token);
+
     const options: RequestOptionsArgs = {
-      headers: new Headers({
-        'Authentication': 'Bearer ' + access_token
-      })
+      headers: headers
     }
 
     return this.http
