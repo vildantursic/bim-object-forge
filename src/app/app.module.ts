@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 import { ForgeViewerComponent } from './components/forge-viewer/forge-viewer.component';
 import { HttpModule } from '@angular/http';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
+import { MainService } from './services/main.service';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,9 @@ import { FileUploadComponent } from './components/file-upload/file-upload.compon
     BrowserModule,
     HttpModule
   ],
-  providers: [],
+  providers: [
+    MainService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
