@@ -1,7 +1,7 @@
 import { Component, ViewChild, OnInit, OnDestroy, ElementRef, Input, AfterViewInit } from '@angular/core';
 import {Http, Headers, RequestOptionsArgs} from '@angular/http';
 import { stringify } from 'querystring';
-import {MainService} from "../../services/main.service";
+import {MainService} from '../../services/main.service';
 
 // We need to tell TypeScript that Autodesk exists as a variables/object somewhere globally
 declare const Autodesk: any;

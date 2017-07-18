@@ -54,8 +54,9 @@ export class MainService {
   authenticate(): any {
     // TODO hide client id and secret
     const dataBody = stringify({
-      client_id: 'l9vGmu4U1wBLLpKtkJRxws8o2ffd5xeb',
-      client_secret: 'F8hHFQYAGmtbX90M',
+      // TODO get client_id and client_secret from env variables
+      client_id: 'CLIENT_ID', // CLIENT_ID
+      client_secret: 'CLIENT_SECRET', // CLIENT_SECRET
       grant_type: 'client_credentials',
       scope: 'data:read data:write bucket:create'
     })
