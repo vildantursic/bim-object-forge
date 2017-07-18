@@ -1,6 +1,6 @@
 <div class="object-window">
   <button type="button" name="button" (click)="addObject()">Add circle</button>
   <button type="button" name="button">Add cube</button>
-  <app-file-upload #fu (change)="fu.upload()" [multiple]="true" [access_token]="access_token"></app-file-upload>
+  <app-file-upload #fu (change)="fu.fileChange($event)" [multiple]="true" [access_token]="access_token"></app-file-upload>
 </div>
 <div #viewerContainer class="viewer"></div>
