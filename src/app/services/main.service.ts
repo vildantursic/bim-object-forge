@@ -60,16 +60,16 @@ export class MainService {
       scope: 'data:read data:write bucket:create'
     })
 
+    const headers = new Headers();
+    /** No need to include Content-Type in Angular 4 */
+    headers.append('Content-Type', 'application/json');
+
     const options: RequestOptionsArgs = {
-      method: 'POST',
-      body: dataBody,
-      headers: new Headers({
-        'Content-Type': 'application/x-www-form-urlencoded'
-      })
+      headers: headers
     }
 
     return this.http
-      .request('https://developer.api.autodesk.com/authentication/v1/authenticate', options)
+      .post('https://developer.api.autodesk.com/authentication/v1/authenticate', dataBody, options)
   }
 
 }

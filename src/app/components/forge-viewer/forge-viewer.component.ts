@@ -1,6 +1,7 @@
 import { Component, ViewChild, OnInit, OnDestroy, ElementRef, Input, AfterViewInit } from '@angular/core';
 import {Http, Headers, RequestOptionsArgs} from '@angular/http';
 import { stringify } from 'querystring';
+import {MainService} from "../../services/main.service";
 
 // We need to tell TypeScript that Autodesk exists as a variables/object somewhere globally
 declare const Autodesk: any;
@@ -19,7 +20,7 @@ export class ForgeViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   access_token = 'eyJhbGciOiJIUzI1NiIsImtpZCI6Imp3dF9zeW1tZXRyaWNfa2V5In0.eyJjbGllbnRfaWQiOiJsOXZHbXU0VTF3QkxMcEt0a0pSeHdzOG8yZmZkNXhlYiIsImV4cCI6MTUwMDM5MDAwOCwic2NvcGUiOlsiZGF0YTpyZWFkIiwiZGF0YTp3cml0ZSIsImJ1Y2tldDpjcmVhdGUiXSwiYXVkIjoiaHR0cHM6Ly9hdXRvZGVzay5jb20vYXVkL2p3dGV4cDYwIiwianRpIjoiWW02b21VS21XMkprVXc3NlRTN1U0UHdEa0dFQkZodzRVa0I3V1RCNVR5dVpQczhrTkQ3dmdOeURwemxUTmZ2byJ9.ubIVj_nGXsZIBh0ctvrykof9ipYSIYIhgqq7RvvN4IY';
   expires_in = 3599;
 
-  constructor(private elementRef: ElementRef, private http: Http) { }
+  constructor(private elementRef: ElementRef, private http: Http, private service: MainService) { }
 
   ngOnInit() {
   }
@@ -110,6 +111,10 @@ export class ForgeViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   private getAccessToken(onSuccess: any) {
     const { access_token, expires_in } = { access_token: this.access_token, expires_in: this.expires_in };
     // TODO add auth from service and get token
+    this.service.authenticate().map(res => res.json()).subscribe((data: any) => {
+      console.log(data);
+    })
+
     onSuccess(access_token, expires_in);
   }
 }
