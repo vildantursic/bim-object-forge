@@ -1,4 +1,5 @@
 <div class="object-window">
   <app-file-upload #fu (change)="fu.fileChange($event)" [multiple]="true" [access_token]="access_token" (onObjectLoad)="objLoad($event)"></app-file-upload>
+  <button (click)="addSphere()">Add TREEJS object</button>
 </div>
 <div #viewerContainer class="viewer"></div>

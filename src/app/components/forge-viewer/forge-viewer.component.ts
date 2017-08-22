@@ -5,6 +5,7 @@ import {MainService} from '../../services/main.service';
 
 // We need to tell TypeScript that Autodesk exists as a variables/object somewhere globally
 declare const Autodesk: any;
+declare const THREE: any;
 
 @Component({
   selector: 'app-forge-viewer',
@@ -16,8 +17,8 @@ export class ForgeViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('viewerContainer') viewerContainer: any;
   private viewer: any;
 
-  myUrn = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bW9kZWwyMDE3LTA3LTE4LTE0LTA2LTI2LWQ0MWQ4Y2Q5OGYwMGIyMDRlOTgwMDk5OGVjZjg0MjdlL1NlYXQuZHdm';
-  access_token = 'eyJhbGciOiJIUzI1NiIsImtpZCI6Imp3dF9zeW1tZXRyaWNfa2V5In0.eyJjbGllbnRfaWQiOiJsOXZHbXU0VTF3QkxMcEt0a0pSeHdzOG8yZmZkNXhlYiIsImV4cCI6MTUwMDM5MDAwOCwic2NvcGUiOlsiZGF0YTpyZWFkIiwiZGF0YTp3cml0ZSIsImJ1Y2tldDpjcmVhdGUiXSwiYXVkIjoiaHR0cHM6Ly9hdXRvZGVzay5jb20vYXVkL2p3dGV4cDYwIiwianRpIjoiWW02b21VS21XMkprVXc3NlRTN1U0UHdEa0dFQkZodzRVa0I3V1RCNVR5dVpQczhrTkQ3dmdOeURwemxUTmZ2byJ9.ubIVj_nGXsZIBh0ctvrykof9ipYSIYIhgqq7RvvN4IY';
+  myUrn = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bW9kZWwyMDE3LTA4LTIyLTA2LTIzLTIwLWQ0MWQ4Y2Q5OGYwMGIyMDRlOTgwMDk5OGVjZjg0MjdlL0dhdGVIb3VzZS5ud2Q';
+  access_token = 'eyJhbGciOiJIUzI1NiIsImtpZCI6Imp3dF9zeW1tZXRyaWNfa2V5In0.eyJjbGllbnRfaWQiOiJsOXZHbXU0VTF3QkxMcEt0a0pSeHdzOG8yZmZkNXhlYiIsImV4cCI6MTUwMzM5MTM2Niwic2NvcGUiOlsiZGF0YTpyZWFkIiwiZGF0YTp3cml0ZSIsImRhdGE6Y3JlYXRlIiwiYnVja2V0OmNyZWF0ZSIsImJ1Y2tldDpyZWFkIl0sImF1ZCI6Imh0dHBzOi8vYXV0b2Rlc2suY29tL2F1ZC9qd3RleHA2MCIsImp0aSI6InFMTVJ6QlBmOHZEZDI4a0N6ZFJ6eFF3SFJVTmVUeVRSWFR0VDNjMUdKYXU0NUp4blB3dVp5cmhVNkhRblBoZ3UifQ.rEGRx6_yzlHKV-PD_zIFo8Dy0vM-lsd515C2IiQPRE4';
   expires_in = 3599;
 
   constructor(private elementRef: ElementRef, private http: Http, private service: MainService) { }
@@ -117,4 +118,74 @@ export class ForgeViewerComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onSuccess(access_token, expires_in);
   }
+
+  addSphere() {
+
+    //create material red
+    var material_red =
+      new THREE.MeshPhongMaterial(
+        { color: 0xff0000 });
+    //add material red to collection
+    this.viewer.impl.matman().addMaterial(
+      'ADN-Material' + 'red',
+      material_red,
+      true);
+
+    //create material green
+    var material_green =
+      new THREE.MeshPhongMaterial(
+        { color: 0x00FF00 });
+    //add material green to collection
+    this.viewer.impl.matman().addMaterial(
+      'ADN-Material' + 'green',
+      material_green,
+      true);
+
+    //get bounding box of the model
+    var boundingBox =
+      this.viewer.model.getBoundingBox();
+    var maxpt = boundingBox.max;
+    var minpt = boundingBox.min;
+
+    var xdiff =    maxpt.x - minpt.x;
+    var ydiff =    maxpt.y - minpt.y;
+    var zdiff =    maxpt.z - minpt.z;
+
+    //set a nice radius in the model size
+    var niceRadius =
+      Math.pow((xdiff * xdiff +
+      ydiff * ydiff +
+      zdiff * zdiff), 0.5) / 10;
+
+    //createsphere1 and place it at max point of boundingBox
+    var sphere_maxpt =
+      new THREE.Mesh(
+        new THREE.SphereGeometry(
+          niceRadius, 20),
+        material_red);
+    sphere_maxpt.position.set(maxpt.x,
+      maxpt.y,
+      maxpt.z);
+
+    //create  sphere2 and place it at
+    //min point of boundingBox
+    var sphere_minpt =
+      new THREE.Mesh(
+        new THREE.SphereGeometry(
+          niceRadius, 20),
+        material_green)
+    sphere_minpt.position.set(minpt.x,
+      minpt.y,
+      minpt.z);
+
+
+    //add two spheres to scene
+    this.viewer.impl.scene.add(sphere_maxpt);
+    this.viewer.impl.scene.add(sphere_minpt);
+
+    //update the viewer
+    this.viewer.impl.invalidate(true);
+
+  }
+
 }
