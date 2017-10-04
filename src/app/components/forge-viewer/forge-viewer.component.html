@@ -1,5 +1,17 @@
-<div class="object-window">
-  <app-file-upload #fu (change)="fu.fileChange($event)" [multiple]="true" [access_token]="access_token" (onObjectLoad)="objLoad($event)"></app-file-upload>
-  <button (click)="addSphere()">Add TREEJS object</button>
+<div class="object-window-button" (click)="sidebar()"></div>
+<div class="object-window" [ngClass]="sidebarActive ? '' : 'object-window-closed'">
+  <div>
+    <app-file-upload #fu (change)="fu.fileChange($event)" [multiple]="true" [access_token]="access_token" (onObjectLoad)="objLoad($event)"></app-file-upload>
+  </div>
+  <div>
+    <button (click)="addSphere()">Add TREEJS object</button>
+  </div>
+  <div>
+    <input type="text" id="urn" #urn>
+    <button (click)="loadFromUrn(urn.value)">Load from URN</button>
+  </div>
+  <div class="editor">
+    <div id="editor">console.log('hello world')</div>
+  </div>
 </div>
 <div #viewerContainer class="viewer"></div>

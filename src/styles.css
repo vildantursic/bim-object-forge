@@ -1,18 +1,3 @@
 body {
   margin: 0;
 }
-#MyViewerDiv {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  background-color: #F0F8FF;
-}
-.object-window {
-  position: absolute;
-  z-index: 5;
-  top: 0;
-  left: 0;
-  width: 200px;
-  height: 200px;
-  background: gray;
-}

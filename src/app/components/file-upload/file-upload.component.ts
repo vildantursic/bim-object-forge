@@ -36,7 +36,7 @@ export class FileUploadComponent {
         headers.append('Authorization', 'Bearer ' + this.access_token);
         const options = new RequestOptions({ headers: headers });
         this.http
-          .put('https://developer.api.autodesk.com/oss/v2/buckets/creation/objects/test.rvt',
+          .put('https://developer.api.autodesk.com/oss/v2/buckets/creation/objects/' + fileList[0].name,
             event.target.files[0],
             options
           )

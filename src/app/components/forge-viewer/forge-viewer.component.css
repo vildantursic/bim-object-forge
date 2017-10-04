@@ -3,3 +3,57 @@
   width: 100%;
   height: 100vh;
 }
+
+#MyViewerDiv {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background-color: #F0F8FF;
+}
+
+.object-window-button {
+  position: absolute;
+  z-index: 5;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: ease .3s;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+.object-window-button:hover {
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
+.object-window {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  width: 400px;
+  height: 100vh;
+  background: #cdcdcd;
+  transition: ease .3s;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+.object-window-closed {
+  left: -400px !important;
+}
+
+#editor {
+  position: absolute;
+  z-index: 100;
+  bottom: 0;
+  left: 0;
+  width: 400px;
+  height: 300px;
+}
+
+

@@ -6,6 +6,7 @@ import {MainService} from '../../services/main.service';
 // We need to tell TypeScript that Autodesk exists as a variables/object somewhere globally
 declare const Autodesk: any;
 declare const THREE: any;
+declare const ace: any;
 
 @Component({
   selector: 'app-forge-viewer',
@@ -17,9 +18,12 @@ export class ForgeViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('viewerContainer') viewerContainer: any;
   private viewer: any;
 
-  myUrn = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bW9kZWwyMDE3LTA4LTIyLTA2LTIzLTIwLWQ0MWQ4Y2Q5OGYwMGIyMDRlOTgwMDk5OGVjZjg0MjdlL0dhdGVIb3VzZS5ud2Q';
-  access_token = 'eyJhbGciOiJIUzI1NiIsImtpZCI6Imp3dF9zeW1tZXRyaWNfa2V5In0.eyJjbGllbnRfaWQiOiJsOXZHbXU0VTF3QkxMcEt0a0pSeHdzOG8yZmZkNXhlYiIsImV4cCI6MTUwMzM5MTM2Niwic2NvcGUiOlsiZGF0YTpyZWFkIiwiZGF0YTp3cml0ZSIsImRhdGE6Y3JlYXRlIiwiYnVja2V0OmNyZWF0ZSIsImJ1Y2tldDpyZWFkIl0sImF1ZCI6Imh0dHBzOi8vYXV0b2Rlc2suY29tL2F1ZC9qd3RleHA2MCIsImp0aSI6InFMTVJ6QlBmOHZEZDI4a0N6ZFJ6eFF3SFJVTmVUeVRSWFR0VDNjMUdKYXU0NUp4blB3dVp5cmhVNkhRblBoZ3UifQ.rEGRx6_yzlHKV-PD_zIFo8Dy0vM-lsd515C2IiQPRE4';
+  myUrn = localStorage.getItem('urn');
+  access_token = localStorage.getItem('access_token');
   expires_in = 3599;
+
+  editor;
+  sidebarActive = false;
 
   constructor(private elementRef: ElementRef, private http: Http, private service: MainService) { }
 
@@ -28,6 +32,9 @@ export class ForgeViewerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.launchViewer();
+    this.editor = ace.edit('editor');
+    this.editor.setTheme('ace/theme/monokai');
+    this.editor.getSession().setMode('ace/mode/javascript');
   }
 
   ngOnDestroy() {
@@ -121,71 +128,65 @@ export class ForgeViewerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   addSphere() {
 
-    //create material red
-    var material_red =
-      new THREE.MeshPhongMaterial(
-        { color: 0xff0000 });
-    //add material red to collection
-    this.viewer.impl.matman().addMaterial(
-      'ADN-Material' + 'red',
-      material_red,
-      true);
+    // create material red
+    const material_red = new THREE.MeshPhongMaterial({ color: 0xff0000 });
+    // add material red to collection
+    this.viewer.impl.matman().addMaterial('ADN-Material' + 'red', material_red, true);
 
-    //create material green
-    var material_green =
-      new THREE.MeshPhongMaterial(
-        { color: 0x00FF00 });
-    //add material green to collection
-    this.viewer.impl.matman().addMaterial(
-      'ADN-Material' + 'green',
-      material_green,
-      true);
+    // create material green
+    const material_green = new THREE.MeshPhongMaterial({ color: 0x00FF00 });
+    // add material green to collection
+    this.viewer.impl.matman().addMaterial('ADN-Material' + 'green', material_green, true);
 
-    //get bounding box of the model
-    var boundingBox =
-      this.viewer.model.getBoundingBox();
-    var maxpt = boundingBox.max;
-    var minpt = boundingBox.min;
+    // get bounding box of the model
+    const boundingBox = this.viewer.model.getBoundingBox();
+    const maxpt = boundingBox.max;
+    const minpt = boundingBox.min;
 
-    var xdiff =    maxpt.x - minpt.x;
-    var ydiff =    maxpt.y - minpt.y;
-    var zdiff =    maxpt.z - minpt.z;
+    const xdiff = maxpt.x - minpt.x;
+    const ydiff = maxpt.y - minpt.y;
+    const zdiff = maxpt.z - minpt.z;
 
-    //set a nice radius in the model size
-    var niceRadius =
-      Math.pow((xdiff * xdiff +
-      ydiff * ydiff +
-      zdiff * zdiff), 0.5) / 10;
+    // set a nice radius in the model size
+    const niceRadius = Math.pow((xdiff * xdiff + ydiff * ydiff + zdiff * zdiff), 0.5) / 10;
 
-    //createsphere1 and place it at max point of boundingBox
-    var sphere_maxpt =
-      new THREE.Mesh(
-        new THREE.SphereGeometry(
-          niceRadius, 20),
-        material_red);
-    sphere_maxpt.position.set(maxpt.x,
-      maxpt.y,
-      maxpt.z);
+    // createsphere1 and place it at max point of boundingBox
+    const sphere_maxpt = new THREE.Mesh(new THREE.SphereGeometry(niceRadius, 20), material_red);
+    sphere_maxpt.position.set(maxpt.x, maxpt.y, maxpt.z);
 
-    //create  sphere2 and place it at
-    //min point of boundingBox
-    var sphere_minpt =
-      new THREE.Mesh(
-        new THREE.SphereGeometry(
-          niceRadius, 20),
-        material_green)
-    sphere_minpt.position.set(minpt.x,
-      minpt.y,
-      minpt.z);
+    // create  sphere2 and place it at
+    // min point of boundingBox
+    const sphere_minpt = new THREE.Mesh(new THREE.SphereGeometry(niceRadius, 20), material_green);
+    sphere_minpt.position.set(minpt.x, minpt.y, minpt.z);
 
+    // const loader = new THREE.ObjectLoader();
+    // loader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/models/json/suzanne.json', ( obj ) => {
+    //   this.viewer.impl.scene.add(obj);
+    // });
+    // const codeToExecute = this.editor.getValue();
+    // const tmpFunc = new Function(codeToExecute);
+    // tmpFunc();
+    eval(this.editor.getValue());
 
-    //add two spheres to scene
+    // add two spheres to scene
     this.viewer.impl.scene.add(sphere_maxpt);
     this.viewer.impl.scene.add(sphere_minpt);
 
-    //update the viewer
-    this.viewer.impl.invalidate(true);
+    // update the viewer
+    this.viewer.impl.invalidate(false,true,true);
+  }
 
+  loadFromUrn(urn: string): void {
+    this.myUrn = urn;
+    this.loadDocument();
+  }
+
+  sidebar(): void {
+    if (!this.sidebarActive) {
+      this.sidebarActive = true;
+    } else {
+      this.sidebarActive = false
+    }
   }
 
 }
