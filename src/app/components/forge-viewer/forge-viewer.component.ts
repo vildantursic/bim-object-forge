@@ -2,6 +2,7 @@ import { Component, ViewChild, OnInit, OnDestroy, ElementRef, Input, AfterViewIn
 import {Http, Headers, RequestOptionsArgs} from '@angular/http';
 import { stringify } from 'querystring';
 import {MainService} from '../../services/main.service';
+import {ColorsDisplay} from "jasmine-spec-reporter/built/display/colors-display";
 
 // We need to tell TypeScript that Autodesk exists as a variables/object somewhere globally
 declare const Autodesk: any;
@@ -23,7 +24,7 @@ export class ForgeViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   expires_in = 3599;
 
   editor;
-  sidebarActive = false;
+  sidebarActive = true;
 
   constructor(private elementRef: ElementRef, private http: Http, private service: MainService) { }
 
@@ -126,17 +127,47 @@ export class ForgeViewerComponent implements OnInit, AfterViewInit, OnDestroy {
     onSuccess(access_token, expires_in);
   }
 
-  addSphere() {
-
+  configureMaterial(color: ColorsDisplay, name: string): any {
     // create material red
-    const material_red = new THREE.MeshPhongMaterial({ color: 0xff0000 });
+    const material = new THREE.MeshPhongMaterial({ color: color });
     // add material red to collection
-    this.viewer.impl.matman().addMaterial('ADN-Material' + 'red', material_red, true);
+    this.viewer.impl.matman().addMaterial('ADN-Material' + name, material, true);
 
-    // create material green
-    const material_green = new THREE.MeshPhongMaterial({ color: 0x00FF00 });
-    // add material green to collection
-    this.viewer.impl.matman().addMaterial('ADN-Material' + 'green', material_green, true);
+    return material
+  }
+  generateObjects(objects: Array<{width: number, height: number; thickness: number, position?: any, material?: any}>): any {
+    const setOfObjects = [];
+
+    objects.forEach((obj, index) => {
+      if (obj.width && obj.height && obj.thickness) {
+        let material;
+        if (obj.material) {
+          material = this.configureMaterial(obj.material.color, obj.material.name);
+        } else {
+          material = this.configureMaterial(0xcdcdcd, 'gray');
+        }
+
+        const mesh = new THREE.Mesh(new THREE.BoxGeometry(obj.width / 1000, obj.height / 1000, obj.thickness / 1000), material);
+        if (obj.position) {
+          mesh.position.set(obj.position.x, obj.position.y, obj.position.z);
+        } else {
+          console.log('item', index)
+          mesh.position.set(0, ((obj.width / 2) * 0.001), objects.map((o, i) => {
+            if (i < index) {
+              obj.thickness += o.thickness;
+            }
+            console.log((obj.thickness) * 0.01);
+            return ((obj.thickness) * 0.01);
+          })[0]);
+        }
+
+        setOfObjects.push(mesh);
+      }
+    });
+
+    return setOfObjects;
+  }
+  addSphere() {
 
     // get bounding box of the model
     const boundingBox = this.viewer.model.getBoundingBox();
@@ -147,33 +178,35 @@ export class ForgeViewerComponent implements OnInit, AfterViewInit, OnDestroy {
     const ydiff = maxpt.y - minpt.y;
     const zdiff = maxpt.z - minpt.z;
 
-    // set a nice radius in the model size
-    const niceRadius = Math.pow((xdiff * xdiff + ydiff * ydiff + zdiff * zdiff), 0.5) / 10;
-
-    // createsphere1 and place it at max point of boundingBox
-    const sphere_maxpt = new THREE.Mesh(new THREE.SphereGeometry(niceRadius, 20), material_red);
-    sphere_maxpt.position.set(maxpt.x, maxpt.y, maxpt.z);
+    const items: Array<any> = this.generateObjects([
+      { width: 1000, height: 1000, thickness: 10, position: {x: 0, y: ((1000 / 2) * 0.001), z: 0}, material: {color: 0x0000ff, name: 'green'}},
+      { width: 1200, height: 1200, thickness: 10, position: {x: 0, y: ((1200 / 2) * 0.001), z: ((10 / 2) * 0.001) + ((10 / 2) * 0.001)}, material: {color: 0x00ff00, name: 'red'}},
+      { width: 1400, height: 1400, thickness: 100, position: {x: 0, y: ((1400 / 2) * 0.001), z: ((10 / 2) * 0.001) + ((10 / 2) * 0.001) + ((100 / 2) * 0.001)}, material: {color: 0xff0000, name: 'blue'}},
+      { width: 1600, height: 1600, thickness: 10, position: {x: 0, y: ((1600 / 2) * 0.001), z: ((10 / 2) * 0.001) + ((10 / 2) * 0.001) + ((100) * 0.001)}, material: {color: 0xffff00, name: 'n'}},
+      { width: 1800, height: 1800, thickness: 10, position: {x: 0, y: ((1800 / 2) * 0.001), z: ((10 / 2) * 0.001) + ((10 / 2) * 0.001) + ((100) * 0.001) + ((10 / 2) * 0.001) + ((10 / 2) * 0.001)}, material: {color: 0xff00ff, name: 'u'}}
+    //
+    //   { width: 1000, height: 1000, thickness: 10, material: {color: 0x0000ff, name: 'blue'}},
+    //   { width: 1200, height: 1200, thickness: 10, material: {color: 0x00ff00, name: 'green'}},
+    //   { width: 1400, height: 1400, thickness: 100, material: {color: 0xff0000, name: 'red'}},
+    //   { width: 1600, height: 1600, thickness: 10, material: {color: 0xffff00, name: 'n'}},
+    //   { width: 1800, height: 1800, thickness: 10, material: {color: 0xff00ff, name: 'u'}},
+    ]);
 
     // create  sphere2 and place it at
     // min point of boundingBox
-    const sphere_minpt = new THREE.Mesh(new THREE.SphereGeometry(niceRadius, 20), material_green);
-    sphere_minpt.position.set(minpt.x, minpt.y, minpt.z);
+    // const sphere_minpt = new THREE.Mesh(new THREE.SphereGeometry(niceRadius, 20), material_green);
+    // sphere_minpt.position.set(minpt.x, minpt.y, minpt.z);
 
-    // const loader = new THREE.ObjectLoader();
-    // loader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/models/json/suzanne.json', ( obj ) => {
-    //   this.viewer.impl.scene.add(obj);
-    // });
-    // const codeToExecute = this.editor.getValue();
-    // const tmpFunc = new Function(codeToExecute);
-    // tmpFunc();
+    // code from editor input
     eval(this.editor.getValue());
 
     // add two spheres to scene
-    this.viewer.impl.scene.add(sphere_maxpt);
-    this.viewer.impl.scene.add(sphere_minpt);
+    items.forEach((item) => {
+      this.viewer.impl.scene.add(item);
+    })
 
     // update the viewer
-    this.viewer.impl.invalidate(false,true,true);
+    this.viewer.impl.invalidate(true, true, false);
   }
 
   loadFromUrn(urn: string): void {
