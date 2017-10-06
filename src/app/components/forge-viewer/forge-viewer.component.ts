@@ -2,7 +2,8 @@ import { Component, ViewChild, OnInit, OnDestroy, ElementRef, Input, AfterViewIn
 import {Http, Headers, RequestOptionsArgs} from '@angular/http';
 import { stringify } from 'querystring';
 import {MainService} from '../../services/main.service';
-import {ColorsDisplay} from "jasmine-spec-reporter/built/display/colors-display";
+import {ColorsDisplay} from 'jasmine-spec-reporter/built/display/colors-display';
+import { reduce } from 'lodash';
 
 // We need to tell TypeScript that Autodesk exists as a variables/object somewhere globally
 declare const Autodesk: any;
@@ -15,6 +16,9 @@ declare const ace: any;
   styleUrls: ['forge-viewer.component.css'],
 })
 export class ForgeViewerComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  mm = 0.001;
+
   private selectedSection: any = null;
   @ViewChild('viewerContainer') viewerContainer: any;
   private viewer: any;
@@ -151,14 +155,12 @@ export class ForgeViewerComponent implements OnInit, AfterViewInit, OnDestroy {
         if (obj.position) {
           mesh.position.set(obj.position.x, obj.position.y, obj.position.z);
         } else {
-          console.log('item', index)
-          mesh.position.set(0, ((obj.width / 2) * 0.001), objects.map((o, i) => {
-            if (i < index) {
-              obj.thickness += o.thickness;
-            }
-            console.log((obj.thickness) * 0.01);
-            return ((obj.thickness) * 0.01);
-          })[0]);
+          console.log((reduce(objects.slice(0, index), (sum, n) => {
+            return sum + (n.thickness * this.mm);
+          }, 0)))
+          mesh.position.set(((obj.width / 2) * this.mm), ((obj.height / 2) * this.mm), (reduce(objects.slice(0, index), (sum, n) => {
+            return sum + (n.thickness * this.mm);
+          }, 0)) + (obj.thickness / 2 * this.mm));
         }
 
         setOfObjects.push(mesh);
@@ -179,17 +181,11 @@ export class ForgeViewerComponent implements OnInit, AfterViewInit, OnDestroy {
     const zdiff = maxpt.z - minpt.z;
 
     const items: Array<any> = this.generateObjects([
-      { width: 1000, height: 1000, thickness: 10, position: {x: 0, y: ((1000 / 2) * 0.001), z: 0}, material: {color: 0x0000ff, name: 'green'}},
-      { width: 1200, height: 1200, thickness: 10, position: {x: 0, y: ((1200 / 2) * 0.001), z: ((10 / 2) * 0.001) + ((10 / 2) * 0.001)}, material: {color: 0x00ff00, name: 'red'}},
-      { width: 1400, height: 1400, thickness: 100, position: {x: 0, y: ((1400 / 2) * 0.001), z: ((10 / 2) * 0.001) + ((10 / 2) * 0.001) + ((100 / 2) * 0.001)}, material: {color: 0xff0000, name: 'blue'}},
-      { width: 1600, height: 1600, thickness: 10, position: {x: 0, y: ((1600 / 2) * 0.001), z: ((10 / 2) * 0.001) + ((10 / 2) * 0.001) + ((100) * 0.001)}, material: {color: 0xffff00, name: 'n'}},
-      { width: 1800, height: 1800, thickness: 10, position: {x: 0, y: ((1800 / 2) * 0.001), z: ((10 / 2) * 0.001) + ((10 / 2) * 0.001) + ((100) * 0.001) + ((10 / 2) * 0.001) + ((10 / 2) * 0.001)}, material: {color: 0xff00ff, name: 'u'}}
-    //
-    //   { width: 1000, height: 1000, thickness: 10, material: {color: 0x0000ff, name: 'blue'}},
-    //   { width: 1200, height: 1200, thickness: 10, material: {color: 0x00ff00, name: 'green'}},
-    //   { width: 1400, height: 1400, thickness: 100, material: {color: 0xff0000, name: 'red'}},
-    //   { width: 1600, height: 1600, thickness: 10, material: {color: 0xffff00, name: 'n'}},
-    //   { width: 1800, height: 1800, thickness: 10, material: {color: 0xff00ff, name: 'u'}},
+      { width: 1000, height: 1000, thickness: 10, material: {color: 0x0000ff, name: 'blue'}},
+      { width: 1200, height: 1200, thickness: 10, material: {color: 0x00ff00, name: 'green'}},
+      { width: 1400, height: 1400, thickness: 100, material: {color: 0xff0000, name: 'red'}},
+      { width: 1600, height: 1600, thickness: 10, material: {color: 0xffff00, name: 'n'}},
+      { width: 1800, height: 1800, thickness: 10, material: {color: 0xff00ff, name: 'u'}},
     ]);
 
     // create  sphere2 and place it at
